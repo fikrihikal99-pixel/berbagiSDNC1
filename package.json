@@ -1,0 +1,17 @@
+{
+  "name": "gdrive-upload-download",
+  "version": "1.0.0",
+  "description": "Aplikasi upload & download file ke Google Drive (Node.js + Express)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "fikrihikal",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "googleapis": "^119.0.0",
+    "multer": "^1.4.5-lts.1"
+  }
+}

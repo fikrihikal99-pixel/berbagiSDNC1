@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Upload & Download ke Google Drive</title>
+  <style>
+    body{ font-family: Arial; max-width:800px; margin:20px auto; }
+    button{ margin-top:10px; }
+    .file-list { margin-top:20px; }
+  </style>
+</head>
+<body>
+  <h2>Upload File ke Folder Google Drive</h2>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" name="file" required />
+    <button type="submit">Upload</button>
+  </form>
+  <div id="status"></div>
+
+  <h3>Daftar File di Folder</h3>
+  <div class="file-list" id="fileList"></div>
+
+<script>
+async function fetchFiles(){
+  const r = await fetch('/files');
+  const data = await r.json();
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  if(!data.files || data.files.length===0){ list.innerHTML = '<i>Tidak ada file.</i>'; return; }
+  data.files.forEach(f => {
+    const div = document.createElement('div');
+    div.innerHTML = `<b>${f.name}</b> — <a href="/download/${f.id}">Download</a>`;
+    list.appendChild(div);
+  });
+}
+
+document.getElementById('uploadForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fileInput = document.getElementById('fileInput');
+  if(!fileInput.files.length) return alert('Pilih file');
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  document.getElementById('status').innerText = 'Uploading...';
+  const r = await fetch('/upload', { method: 'POST', body: fd });
+  const res = await r.json();
+  if(res.success){ document.getElementById('status').innerText = 'Upload berhasil: ' + res.file.name; fetchFiles(); }
+  else { document.getElementById('status').innerText = 'Upload gagal: ' + (res.error || JSON.stringify(res)); }
+});
+
+fetchFiles();
+</script>
+</body>
+</html>
